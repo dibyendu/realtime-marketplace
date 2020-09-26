@@ -1,0 +1,71 @@
+doctype html
+html(lang='en')
+	head
+		title= pageTitle
+		meta(http-equiv='Content-Type', content='text/html', charset='utf-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no')
+
+		meta(name='google-signin-client_id', content=app_id)
+		script(async, defer, type='text/javascript', src='https://apis.google.com/js/platform.js')
+		
+		link(rel='stylesheet', type='text/css', href='https://js.arcgis.com/3.20/esri/themes/calcite/dijit/calcite.css')
+		link(rel='stylesheet', type='text/css', href='https://js.arcgis.com/3.20/esri/themes/calcite/esri/esri.css')
+		link(rel='stylesheet', type='text/css', href='static/index.css')
+
+		script(type='text/javascript', src='https://unpkg.com/merge-images')
+		script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+		script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.0/socket.io.js')
+		script(src='https://unpkg.com/react@15/dist/react.min.js')
+		script(src='https://unpkg.com/react-dom@15/dist/react-dom.min.js')
+		script(type='text/javascript', src='https://js.arcgis.com/3.20/')
+
+	body.calcite
+		input(type='hidden', id='ip', value=user.ip)
+		input(type='hidden', id='fname', value=user.first)
+		input(type='hidden', id='lname', value=user.last)
+		input(type='hidden', id='email', value=user.email)
+		h2= heading
+		#search
+		#map
+		p.info click anywhere on the map to enter your product information
+		#user
+			img(src=user.image)
+			a(class='logout' onclick='signOut()' href='#') Log Out
+			p
+				span= user.first
+				|&nbsp;
+				span= user.last
+			.products My Listing
+				ul
+		noscript You need to enable JavaScript to run this app.
+		#modal
+		script(type='text/javascript', src='static/map.js')
+		script(type='text/javascript', src='static/modal.js')
+		script(type='text/javascript').
+			const socket = io('!{host}:!{port}')
+			socket.on('connect', function () {
+				console.log(`new socket (id =  ${socket.id}) is connected`)
+			}).on('seller added', function (msg) {
+				addMarker(msg.data, msg.id)
+			}).on('seller updated', function (msg) {
+				updateMarker(msg.data, msg.id)
+			}).on('seller removed', function (msg) {
+				removeMarker(msg.id)
+			}).on('disconnect', function () {
+				console.log(`socket (id = ${socket.id}) is disconnected`)
+			}).on('error', function (error){
+				console.error(error)
+			})
+			function deleteCookie(cname) {
+				document.cookie = cname + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/'
+			}
+			function signOut() {
+				gapi.load('auth2', () => {
+					gapi.auth2.init().then(() => {
+						gapi.auth2.getAuthInstance().signOut().then(() => {
+							deleteCookie('login')
+							window.location.href = '/login'
+						})
+					})
+				})
+			}

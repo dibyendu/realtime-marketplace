@@ -1,0 +1,20 @@
+doctype html
+html(lang='en')
+	head
+		title= pageTitle
+		meta(http-equiv='Content-Type', content='text/html', charset='utf-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no')
+		
+		link(rel='stylesheet', type='text/css', href='../static/index.css')
+
+		script(type='text/javascript', src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+		script(src='https://unpkg.com/react@15/dist/react.min.js')
+		script(src='https://unpkg.com/react-dom@15/dist/react-dom.min.js')
+
+	body
+		h2= heading
+		noscript You need to enable JavaScript to run this app.
+		#edit
+		script(type='text/javascript').
+			const userData = !{data};
+		script(type='text/javascript', src='../static/edit.js')
